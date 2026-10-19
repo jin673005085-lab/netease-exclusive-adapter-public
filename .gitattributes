@@ -1,2 +1,9 @@
 * text=auto eol=lf
 *.cmd text eol=crlf
+# Preserve upstream bytes used by integrity checks.
+scripts/Manage-AudioExclusive.ps1 -text -whitespace
+ui/netease-settings.js -text
+licenses/upstream/** -text -whitespace
+runtime/payload.zip binary
+runtime/205529.zip binary
+scripts/Use-Adapter.ps1 text eol=crlf

@@ -1,0 +1,11 @@
+{
+  "source": "payload/NetEase/nc-exclusive-hook.dll",
+  "source_sha256": "4a9e32cfffaed5b0ec60f3e5844113218245571f66837aae19adb23a149122db",
+  "resource_type": 10,
+  "resource_name": 101,
+  "language": 1033,
+  "file_offset": 340128,
+  "bytes": 9288,
+  "sha256": "ac0966c0eb521ddd0920949a601c17af54193675eddddeb904b32f6c08a7c465",
+  "output": "NetEase-settings.extracted.js"
+}

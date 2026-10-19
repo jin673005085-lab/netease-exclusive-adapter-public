@@ -1,4 +1,4 @@
-"""Prepare and manage the 205529 adapter using a locally supplied installer."""
+"""Prepare and manage the 205529 adapter using bundled runtime files."""
 import argparse
 import contextlib
 import io
@@ -21,6 +21,19 @@ PAYLOAD_HASH = "8695c9d18f117533d62520484db742eb5d705b028e92a8ea9d8ae0ba410cf42d
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def unpack_runtime(manager_bytes, payload, destination):
+    require(sha(manager_bytes) == MANAGER_HASH, "Management script integrity check failed.")
+    require(sha(payload) == PAYLOAD_HASH, "Plugin archive integrity check failed.")
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=True)
+    manager = destination / "Manage-AudioExclusive.ps1"
+    manager.write_bytes(manager_bytes)
+    # Only extract the exact pinned archive after its SHA-256 check.
+    with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+        archive.extractall(destination / "payload")
+    return destination / "payload", manager
+
+
 def unpack_setup(setup, destination):
     data = Path(setup).read_bytes()
     require(sha(data) == SETUP_HASH, "Installer does not match AudioExclusive 2026.10.15.4.")
@@ -33,17 +46,12 @@ def unpack_setup(setup, destination):
                         require(len(entry.directory.entries) == 1, "Ambiguous installer resource")
                         resource = entry.directory.entries[0].data.struct
                         resources[entry.id] = image.get_data(resource.OffsetToData, resource.Size)
-    require(sha(resources.get(101, b"")) == MANAGER_HASH, "Management script integrity check failed.")
-    payload = resources.get(102, b"")
-    require(sha(payload) == PAYLOAD_HASH, "Plugin archive integrity check failed.")
-    destination = Path(destination)
-    destination.mkdir(parents=True, exist_ok=True)
-    manager = destination / "Manage-AudioExclusive.ps1"
-    manager.write_bytes(resources[101])
-    # Only extract the exact pinned archive after its SHA-256 check.
-    with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-        archive.extractall(destination / "payload")
-    return destination / "payload", manager
+    return unpack_runtime(resources.get(101, b""), resources.get(102, b""), destination)
+
+
+def unpack_bundled(destination):
+    return unpack_runtime((ROOT / "scripts/Manage-AudioExclusive.ps1").read_bytes(),
+                          (ROOT / "runtime/payload.zip").read_bytes(), destination)
 
 
 def run_manager(manager, action, client=None, bundle=None, manifest=None):
@@ -86,7 +94,7 @@ def prompt_path(message):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--action", choices=["Install", "Build", "Launch", "Status", "Remove"])
-    parser.add_argument("--setup", type=Path, help="Local AudioExclusive 2026.10.15.4 installer")
+    parser.add_argument("--setup", type=Path, help="Optional: use a matching installer instead of bundled files")
     parser.add_argument("--client", type=Path, help="CloudMusic installation directory")
     parser.add_argument("--out", type=Path, help="New output directory (optional)")
     args = parser.parse_args(argv)
@@ -100,7 +108,6 @@ def main(argv=None):
         manager = Path(os.environ["LOCALAPPDATA"]) / "AudioExclusive/Manage-AudioExclusive.ps1"
         run_manager(manager, args.action)
         return
-    setup = args.setup or prompt_path("AudioExclusive 安装包路径（可拖入文件）: ")
     client = args.client or prompt_path("网易云安装目录（包含 cloudmusic.exe）: ")
     client = client.resolve()
     if args.out is not None:
@@ -109,7 +116,7 @@ def main(argv=None):
         print("安装可能关闭并重新打开网易云，请先保存播放进度。独占播放前请调低 DAC 音量。")
     with tempfile.TemporaryDirectory(prefix="nce-input-") as work:
         work = Path(work)
-        payload, manager = unpack_setup(setup, work)
+        payload, manager = unpack_setup(args.setup, work) if args.setup else unpack_bundled(work)
         if args.out is None:
             (ROOT / "dist").mkdir(exist_ok=True)
             args.out = Path(tempfile.mkdtemp(prefix="205529-", dir=ROOT / "dist")) / "package"

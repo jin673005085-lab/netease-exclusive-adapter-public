@@ -1,0 +1,112 @@
+[
+  {
+    "path": "AppleMusic/am-exclusive-broker.exe",
+    "bytes": 397312,
+    "sha256": "8e0e04d241ef6f754b16595782b40f4a544fa850d5721667e8774d3d2638ac05"
+  },
+  {
+    "path": "AppleMusic/am-exclusive-hook.dll",
+    "bytes": 658944,
+    "sha256": "bed0c30b30af0ab89b21043a64454f70c198776629e749b59bea5dc2718aa6b4"
+  },
+  {
+    "path": "AppleMusic/am-exclusive-ui.dll",
+    "bytes": 477184,
+    "sha256": "0dd94b085cbc081628169e6a083bc1eaaa7a79e3f2286a1267e12f7b6365e3d7"
+  },
+  {
+    "path": "AppleMusic/am_exclusive_media_control.exe",
+    "bytes": 271360,
+    "sha256": "0725173bf2ba8ee1101d6afb64da08989d84e46f4b09ae3b8f46e75fe8281d24"
+  },
+  {
+    "path": "AppleMusic/LICENSE",
+    "bytes": 1102,
+    "sha256": "ad1955407c328a455813e76bdf9d33d1932d3ee10573c15d870944f9411887a5"
+  },
+  {
+    "path": "AppleMusic/Register-Companion.ps1",
+    "bytes": 3341,
+    "sha256": "c2443492279c34246b644549c3dc77ce788cfd603e4c211859f4d27939ef7677"
+  },
+  {
+    "path": "AppleMusic/Start-VerifiedAppleCompanion.ps1",
+    "bytes": 3741,
+    "sha256": "a3058c4ae96d90915c2a5a953632cc5184c1c007b322f5495924881d73709985"
+  },
+  {
+    "path": "AppleMusic/THIRD_PARTY_NOTICES.md",
+    "bytes": 4216,
+    "sha256": "39f78f56c70a368c8c62c045ed361aeeba3c485cd73a4d085b96b14f0bb3b19c"
+  },
+  {
+    "path": "bundle.json",
+    "bytes": 9163,
+    "sha256": "4798ae7c73287579b091cb8dc226c123cf8c001f3b768099012ddaa8c1915159"
+  },
+  {
+    "path": "NetEase/ASIO-SDK-LICENSE.txt",
+    "bytes": 2640,
+    "sha256": "61e56814f24b32216884b2db0b4dcc317111a5ab354d54d19dd9fc13d71b1c7a"
+  },
+  {
+    "path": "NetEase/GPL-3.0.txt",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  {
+    "path": "NetEase/licenses/AMExclusive.txt",
+    "bytes": 1102,
+    "sha256": "ad1955407c328a455813e76bdf9d33d1932d3ee10573c15d870944f9411887a5"
+  },
+  {
+    "path": "NetEase/licenses/ASIO-SDK-LICENSE.txt",
+    "bytes": 2640,
+    "sha256": "61e56814f24b32216884b2db0b4dcc317111a5ab354d54d19dd9fc13d71b1c7a"
+  },
+  {
+    "path": "NetEase/licenses/CEF.txt",
+    "bytes": 1662,
+    "sha256": "058c3827ffb827ff3edda471ae7e1bb1d1aa5931985f0126043ccd33409e792f"
+  },
+  {
+    "path": "NetEase/licenses/Chromium.txt",
+    "bytes": 1559,
+    "sha256": "845022e0c1db1abb41a6ba4cd3c4b674ec290f3359d9d3c78ae558d4c0ed9308"
+  },
+  {
+    "path": "NetEase/licenses/GPL-3.0.txt",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  {
+    "path": "NetEase/licenses/MinHook.txt",
+    "bytes": 4446,
+    "sha256": "4f21f857550d7be854da6ea5f2da4e6775ca4e3fbb535e4f3d961c47d0bf3335"
+  },
+  {
+    "path": "NetEase/nc-exclusive-asio-probe.exe",
+    "bytes": 246784,
+    "sha256": "0b8a6b4daa9956a479e8ebf827afd6ffaced5c1098b97cced3d4da59a7bcc528"
+  },
+  {
+    "path": "NetEase/nc-exclusive-hook.dll",
+    "bytes": 352768,
+    "sha256": "4a9e32cfffaed5b0ec60f3e5844113218245571f66837aae19adb23a149122db"
+  },
+  {
+    "path": "NetEase/nc-exclusive-launcher.exe",
+    "bytes": 260608,
+    "sha256": "e4767fbd3cb0f8769ab9a7f24949446a06145b106f9fad6cb08f9cef3c3e55c9"
+  },
+  {
+    "path": "NetEase/nc-exclusive-probe.exe",
+    "bytes": 139776,
+    "sha256": "02a955730a6128bb8d88b6024463299454e9505fdd50e42c44373cf3152789c9"
+  },
+  {
+    "path": "NetEase/THIRD_PARTY_NOTICES.md",
+    "bytes": 1755,
+    "sha256": "f926800c00a8f88b4e43684255e95ccc29242eeeabe52f83958f816d54ed4238"
+  }
+]

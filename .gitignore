@@ -1,4 +1,4 @@
-# Local inputs and generated binaries must never be published.
+# Keep local inputs and generated files private; only the pinned runtime is shipped.
 /inputs/
 /dist/
 /artifacts/
@@ -7,6 +7,8 @@ __pycache__/
 *.exe
 *.dll
 *.zip
+!/runtime/payload.zip
+!/runtime/205529.zip
 *.pdb
 *.jsonl
 *.log
