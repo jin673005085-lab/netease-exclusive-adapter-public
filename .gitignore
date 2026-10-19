@@ -1,0 +1,15 @@
+# Local inputs and generated binaries must never be published.
+/inputs/
+/dist/
+/artifacts/
+__pycache__/
+*.pyc
+*.exe
+*.dll
+*.zip
+*.pdb
+*.jsonl
+*.log
+settings.ini
+.env
+.env.*
