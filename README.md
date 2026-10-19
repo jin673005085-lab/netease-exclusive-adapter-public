@@ -2,20 +2,46 @@
 
 为 **网易云音乐 Windows x64 3.1.41.205529** 提供 AudioExclusive 兼容包构建工具，配合现有插件使用 WASAPI 独占输出。
 
-构建前会检查客户端版本和输入文件完整性，构建完成后可通过管理脚本安装、查询状态或移除插件。
+双击 `AudioExclusive.cmd`，按提示选择操作。脚本会自动读取本地安装包、检查客户端、生成兼容包并完成安装，也支持启动、查询状态和移除插件。
 
-需要自行准备 **AudioExclusive 2026.10.15.4** 的插件文件和管理脚本。当前发布形式为 Python 脚本。
+需要 Python 3.9+ 和自行准备的 **AudioExclusive 2026.10.15.4 安装包**。无需手动拆包；工具只读取安装包，不运行其中的安装器。
+
+## 快速使用
+
+1. 从 [Releases](https://github.com/jin673005085-lab/netease-exclusive-adapter-public/releases/latest) 下载脚本包，解压到一个普通文件夹。
+2. 安装 [Python 3.9 或更新版本](https://www.python.org/downloads/windows/)，勾选 **Add Python to PATH**。
+3. 打开需要适配的网易云，双击 `AudioExclusive.cmd`，选择 **1 安装**。
+4. 按提示填入 AudioExclusive 安装包路径和网易云安装目录，例如 `D:\CloudMusic`。文件路径可以拖入窗口。
+5. 完成后，从开始菜单 **AudioExclusive → 网易云音乐（独占插件）** 启动，在播放设置中选择 DAC 并开启独占。
+
+首次运行会通过 pip 安装所需的 `pefile` 库，需要联网。安装包和客户端必须通过文件校验；同版本号但文件不同也会停止安装。安装可能关闭并重新打开网易云，请先保存播放进度。
+
+**独占播放前请先调低 DAC 硬件音量，Windows 系统音量可能不再生效。**
+
+以后双击同一入口，可选择 **2 启动、3 状态、4 移除**。仅安装需要提供安装包，其他操作使用本机已安装的管理脚本。
+
+命令行也可以直接使用（先执行 `python -m pip install -r requirements.txt`）：
+
+```powershell
+python scripts/use_adapter.py --action Install --setup 'C:\Downloads\AudioExclusive-Setup.exe' --client 'D:\CloudMusic'
+```
+
+只想生成兼容包、不安装时，将 `Install` 改为 `Build`。默认输出到 `dist/` 下的新目录；可用 `--out` 指定尚不存在的输出目录。
 
 ## 项目内容
 
 | 路径 | 内容 |
 | --- | --- |
+| `AudioExclusive.cmd` | Windows 双击入口 |
+| `scripts/use_adapter.py` | 安装包读取、自动构建与插件管理 |
 | `scripts/build_adapter.py` | 兼容包构建、校验和打包 |
 | `tests/test_build_adapter.py` | 输出保护、版本和输入完整性测试 |
 | `requirements.txt` | Python 依赖 |
 | `PROVENANCE.md` | 构建依赖、文件校验与组件许可 |
 
-## 准备本地输入
+## 手动构建（可选）
+
+使用上面的快捷入口时，无需准备以下目录。已有插件文件的开发者可以直接构建。
 
 需要 Python 3.9+、Windows PowerShell，以及：
 
@@ -34,7 +60,7 @@ inputs/
     ...清单中的其他文件
 ```
 
-## 构建
+### 构建命令
 
 ```powershell
 python -m pip install -r requirements.txt
@@ -79,19 +105,18 @@ $hash = (Get-FileHash -LiteralPath $bundle -Algorithm SHA256).Hash
 
 WASAPI 独占可绕过 Windows 共享混音路径；实际输出仍受播放器处理和设备能力影响，以上结果不代表歌曲原始采样率或全链路 bit-perfect。多采样率切换、设备拔插和长期稳定性尚未完整验证。
 
-独占播放时，Windows 系统音量可能无法控制播放音量，请先调低 DAC 硬件音量再播放。当前工具不包含 DAC 音量驱动。
-
 ## 测试
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-默认执行两项不依赖客户端的保护测试。提供本地依赖后，可以执行另外三项集成保护测试：
+默认执行不依赖客户端的保护测试。提供本地依赖后，可执行完整集成检查：
 
 ```powershell
 $env:NCE_TEST_CLIENT = 'D:\CloudMusic'
 $env:NCE_TEST_PAYLOAD_DIR = (Resolve-Path inputs/payload).Path
+$env:NCE_TEST_SETUP = 'C:\Downloads\AudioExclusive-Setup.exe'
 python -m unittest discover -s tests -v
 ```
 
