@@ -4,8 +4,11 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+import sys
+from unittest.mock import patch
 
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 spec = importlib.util.spec_from_file_location(
     "build_adapter", Path(__file__).resolve().parents[1] / "scripts" / "build_adapter.py")
 adapter = importlib.util.module_from_spec(spec)
@@ -37,6 +40,19 @@ class BuildGuards(unittest.TestCase):
 @unittest.skipUnless(os.getenv("NCE_TEST_CLIENT") and os.getenv("NCE_TEST_PAYLOAD_DIR"),
                      "Optional original payload and exact client are not provided")
 class LocalIntegrationGuards(unittest.TestCase):
+    def test_changed_transition_helper_is_rejected(self):
+        original_read = Path.read_bytes
+        def read(path):
+            if path.name == 'declick-helper.dll':
+                return b'corrupt helper'
+            return original_read(path)
+        with tempfile.TemporaryDirectory() as folder, patch.object(Path, 'read_bytes', read):
+            out = Path(folder) / 'output'
+            with self.assertRaisesRegex(ValueError, 'Transition helper integrity'):
+                adapter.build(os.environ['NCE_TEST_PAYLOAD_DIR'], os.environ['NCE_TEST_CLIENT'],
+                              out, Path(__file__).resolve().parents[1] / 'scripts/Manage-AudioExclusive.ps1')
+            self.assertFalse(out.exists())
+
     def test_edited_manifest_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

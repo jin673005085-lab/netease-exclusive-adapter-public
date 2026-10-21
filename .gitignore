@@ -9,6 +9,7 @@ __pycache__/
 *.zip
 !/runtime/payload.zip
 !/runtime/205529.zip
+!/runtime/declick-helper.dll
 *.pdb
 *.jsonl
 *.log

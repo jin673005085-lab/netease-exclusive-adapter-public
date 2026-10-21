@@ -7,6 +7,7 @@ import json
 import zipfile
 
 import pefile
+from build_declick import patch_hook
 
 EXPECTED = {
     "cloudmusic.exe": "16689d9731121f0f15116205d73a472748de932b6a848e36b55b60501cbf0ede",
@@ -82,21 +83,25 @@ def build(source, client, out, manager):
                    for i in range(change["offset"], change["offset"] + change["bytes"])}
         require(all(a == b or i in allowed for i, (a, b) in enumerate(zip(original, modified))), "Unexpected diff")
         patched[relative] = modified
+    helper = (Path(__file__).resolve().parents[1] / 'runtime/declick-helper.dll').read_bytes()
+    require(sha(helper) == 'a8eee31902e5b82b3b669b37692daa117aeb87644b89160956e2685950214fd8', 'Transition helper integrity check failed')
+    patched['NetEase/nc-exclusive-hook.dll'] = patch_hook(patched['NetEase/nc-exclusive-hook.dll'], helper)
     meta = copy.deepcopy(meta)
     app = meta["applications"]["NetEase"]
-    app["version"] = "3.1.36.205322 / 3.1.41.205529 x64 (local static candidate)"
-    app["supportedVersions"][1] = "3.1.41.205529 x64 (static candidate; playback unverified)"
+    app["version"] = "3.1.36.205322 / 3.1.41.205529 x64"
+    app["supportedVersions"][1] = "3.1.41.205529 x64 (Macaron playback verified locally)"
     app["fingerprints"] = EXPECTED.copy()
     profile = app["profiles"][1]
     profile["version"] = "3.1.41.205529"
     profile["fingerprints"] = EXPECTED.copy()
-    profile["profile"] = "Local static compatibility candidate; playback unverified"
+    profile["profile"] = "Exact-build compatibility; Macaron playback verified locally"
     profile.pop("observedInitializeCallReturnRva", None)
     profile["staticInitializeCallReturnRva"] = "0x109062b"
-    meta["build"] = "2026.10.15.4-local-205529-static-candidate"
+    meta["build"] = "205529-declick-v0.3.1"
     for record in meta["files"]:
         if record["path"] in patched:
             record["sha256"] = sha(patched[record["path"]])
+            record["bytes"] = len(patched[record["path"]])
     for record in app["files"]:
         relative = "NetEase/" + record["name"]
         if relative in patched:
@@ -120,7 +125,8 @@ def build(source, client, out, manager):
             require(sha(z.read(record["path"])) == record["sha256"], "New manifest hash mismatch")
     (OUT / "Manage-AudioExclusive.ps1").write_bytes(manager_bytes)
     result = {"status": "build-checks-passed-playback-not-tested-by-builder", "client_version": "3.1.41.205529",
-              "client_sha256": EXPECTED, "changes": changes, "machine_code_unchanged": True,
+              "client_sha256": EXPECTED, "changes": changes, "machine_code_unchanged": False,
+              "transition_patch": {"fade_ms": 5, "callsite_rvas": ["0x15bed", "0x1665c"], "helper_sha256": sha(helper)},
               "code_anchors": {hex(k): v for k, v in anchors.items()},
               "payload_sha256": sha(archive.read_bytes()), "original_client_unchanged": True}
     for name, digest in EXPECTED.items():

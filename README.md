@@ -4,6 +4,8 @@
 
 **日常使用只需要 Windows 自带的 PowerShell，无需安装 Python，也无需另找 AudioExclusive 安装包。**
 
+**v0.3.1 已加入播放过渡补丁**，处理暂停、继续和切歌时的爆音。在 Macaron USB DAC 上完成试听，反馈没有爆音；其他设备尚未逐一验证。已有用户下载新版后，重新选择 **1 安装** 即可更新。
+
 ## 快速使用
 
 1. 克隆仓库，或从 [Releases](https://github.com/jin673005085-lab/netease-exclusive-adapter-public/releases/latest) 下载完整包并解压。
@@ -36,8 +38,10 @@
 | `scripts/build_adapter.py` | 兼容包构建、校验和打包 |
 | `runtime/205529.zip` | 可直接安装的 205529 适配组件 |
 | `runtime/payload.zip` | 构建脚本使用的固定版本输入 |
+| `runtime/declick-helper.dll` | 原生过渡补丁的预编译构建组件 |
 | `ui/netease-settings.js` | 设置页脚本参考 |
 | `reverse-engineering/` | 核心函数伪代码和相关分析 |
+| `native/` | 播放过渡补丁源码及构建、验证说明 |
 | `tests/` | 文件完整性、构建保护与入口检查 |
 | `licenses/upstream/` | 上游许可及组件通知 |
 
@@ -64,6 +68,8 @@ WASAPI 独占可绕过 Windows 共享混音路径；实际输出仍受播放器�
 
 升级网易云后请重新确认兼容性，勿修改校验值来强行加载。
 
+过渡补丁只在开始、停止处加入约 5 ms 渐入渐出，连续播放的样本保持不变；过渡段会改变 PCM，不属于全程位完美输出。停止时会额外等待缓冲播放，可能有轻微延迟，详见 [补丁说明](native/README.md)。
+
 ## 测试
 
 ```powershell
@@ -79,4 +85,4 @@ python -m unittest discover -s tests -v
 
 ## 许可
 
-本项目编写的适配脚本、测试和文档使用 [MIT](LICENSE)。AudioExclusive 管理脚本、设置页、原生组件及其派生材料保留各自许可，不纳入本项目的 MIT 授权，详见 [组件许可说明](PROVENANCE.md)。
+本项目编写的适配脚本、测试和文档使用 [MIT](LICENSE)；`native/declick.c` 使用 GPL-3.0-only。AudioExclusive 管理脚本、设置页、原生组件及其派生材料保留各自许可，不纳入本项目的 MIT 授权，详见 [组件许可说明](PROVENANCE.md)。

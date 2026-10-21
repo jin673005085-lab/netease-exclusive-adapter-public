@@ -12,7 +12,7 @@ $adapterRoot=Split-Path -Parent $PSScriptRoot
 $adapterManagerPath=Join-Path $PSScriptRoot 'Manage-AudioExclusive.ps1'
 $adapterBundlePath=Join-Path $adapterRoot 'runtime\205529.zip'
 $adapterManagerHash='d4979af1b443eef9e216de50f229c2ed3075265032d2b043152db1f676450999'
-$adapterBundleHash='c7e6f9653bb8de707fdac11ab0bd49ed726ca182a3ed45996c298d52e7c014e9'
+$adapterBundleHash='b7f5318f9c703297c08cb071624efb9fec2a63122cfa4b3e72ecdac269885583'
 try {
     if ((Get-FileHash -LiteralPath $adapterManagerPath -Algorithm SHA256).Hash -ine $adapterManagerHash) {
         throw '管理脚本校验失败，请重新下载完整脚本包。'
